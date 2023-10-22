@@ -32,6 +32,7 @@ async function connectToMongoDB() {
 function createTicketModel() {
   const ticketSchema = new Schema(
     {
+      id: String,
       title: String,
       description: String,
       category: String,

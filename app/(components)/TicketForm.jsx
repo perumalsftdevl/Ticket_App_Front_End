@@ -2,7 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-const TicketForm = () => {
+const TicketForm = ({ ticket }) => {
+  const EDITMODE = ticket._id === "new" ? false : true;
+
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -20,16 +22,37 @@ const TicketForm = () => {
 
     e.preventDefault();
 
-    const res = await fetch("/api/Tickets", {
-      method: "POST",
-      body: JSON.stringify({ formData }),
-      "Content-Type": "application/json",
-    });
-    if (!res.ok) {
-      throw new Error("Failed to create Ticket");
+    if (EDITMODE) {
+      const res = await fetch("http://localhost:8081/api/update_tickets", {
+        method: "PUT",
+        body: JSON.stringify({ formData }),
+        headers: {
+          "Content-Type": "application/json", // Correct format for setting the header
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create Ticket");
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } else {
+      const res = await fetch("http://localhost:8081/api/add_tickets", {
+        method: "POST",
+        body: JSON.stringify({ formData }),
+        headers: {
+          "Content-Type": "application/json", // Correct format for setting the header
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create Ticket");
+      } else {
+        router.push("/");
+        router.refresh();
+      }
     }
-    router.refresh();
-    router.push("/");
   };
 
   const StartingTicketData = {
@@ -41,6 +64,16 @@ const TicketForm = () => {
     status: "not start",
   };
 
+  if (EDITMODE) {
+    StartingTicketData["title"] = ticket.title;
+    StartingTicketData["description"] = ticket.description;
+    StartingTicketData["category"] = ticket.category;
+    StartingTicketData["priority"] = ticket.priority;
+    StartingTicketData["progress"] = ticket.progress;
+    StartingTicketData["status"] = ticket.status;
+    StartingTicketData["active"] = ticket.active;
+    StartingTicketData["id"] = ticket._id;
+  }
   const [formData, setFormData] = useState(StartingTicketData);
 
   return (
@@ -50,7 +83,7 @@ const TicketForm = () => {
         method="post"
         onSubmit={handleSubmit}
       >
-        <h3>Create Your Ticket</h3>
+        <h3> {EDITMODE ? "Update Your Ticket" : "Create Your Ticket"}</h3>
 
         <label>Title</label>
         <input
@@ -157,7 +190,11 @@ const TicketForm = () => {
           <option value="done">Done</option>
         </select>
 
-        <input type="submit" className="btn" value="create Ticket" />
+        <input
+          type="submit"
+          className="btn"
+          value={EDITMODE ? "Update  Ticket" : "Create  Ticket"}
+        />
       </form>
     </div>
   );

@@ -1,4 +1,4 @@
-import { faTicket, faHome } from "@fortawesome/free-solid-svg-icons";
+import { faTicket, faHome, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 
@@ -15,7 +15,10 @@ const Nav = () => {
       </div>
 
       <div>
-        <p className="text-default-text">lll@gmail.com</p>
+        <div className="text-default-text">
+          <FontAwesomeIcon icon={faUserAlt} className="icon pe-3" />
+          Perumalkce2022@gmail.com
+        </div>
       </div>
     </nav>
   );
